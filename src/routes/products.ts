@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { randomUUID } from 'node:crypto'
@@ -16,22 +17,30 @@ export async function productsRoutes(app: FastifyInstance) {
     return { product }
   })
 
+  app.get('/', async () => {
+    const products = await knex('products').select()
+
+    return { products }
+  })
+
   app.post('/', async (request, reply) => {
     const productSchema = z.object({
       name: z.string(),
       description: z.string(),
       price: z.number(),
+      image_url: z.string(),
     })
 
     const product = productSchema.parse(request.body)
 
-    const { name, description, price } = product
+    const { name, description, price, image_url } = product
 
     await knex('products').insert({
       id: randomUUID(),
       name,
       description,
       price,
+      image_url,
     })
 
     return reply.status(201).send()
