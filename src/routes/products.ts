@@ -17,10 +17,10 @@ export async function productsRoutes(app: FastifyInstance) {
     return { product }
   })
 
-  app.get('/', async () => {
+  app.get('/', async (request, reply) => {
     const products = await knex('products').select()
 
-    return { products }
+    return reply.send({ products })
   })
 
   app.post('/', async (request, reply) => {
